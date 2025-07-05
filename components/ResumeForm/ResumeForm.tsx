@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { FileUpload } from "../ui/file-upload";
+import { fetchCompanyName, fetchCompanyInfoAI } from "@/util/routeFunctions";
 
 const formSchema = z.object({
   jobUrl: z.string().url({ message: "Please enter a valid URL." }),
@@ -33,14 +34,21 @@ export function ResumeForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       jobUrl: "",
+      // resumeFile: undefined,
     },
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
+    try {
+      const { companyName } = await fetchCompanyName(values.jobUrl);
+      console.log("Extracted company name:", companyName);
+      const data = await fetchCompanyInfoAI(companyName, values.jobUrl);
+      console.log("AI Company Info Result:", data);
+    } catch (err) {
+      console.error("Error in form submission:", err);
+    }
   }
 
   return (
@@ -83,7 +91,7 @@ export function ResumeForm() {
           )}
         />
         <Button className="bg-blue-500 w-full" type="submit">
-          Submit
+          Start Building!
         </Button>
       </form>
     </Form>
