@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { researchCompany } from "@/lib/agent";
+// import { researchCompany } from "@/lib/agent";
+import { agent } from "@/lib/agent";
 
 export async function POST(request: Request) {
   try {
@@ -10,8 +11,8 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
-    const result = await researchCompany(companyName, jobUrl);
-    return NextResponse.json(result);
+    const result = await agent.researchCompany(companyName, jobUrl);
+    return NextResponse.json(result?.text);
   } catch (err) {
     return NextResponse.json(
       { error: "AI scraping failed", details: String(err) },
