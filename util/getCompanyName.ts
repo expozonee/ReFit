@@ -26,7 +26,6 @@ export async function getCompanyName(jobUrl: string): Promise<string | null> {
       ],
     });
     const companyName = response.output_text;
-    console.log(companyName);
 
     return companyName || null;
   } catch (error) {
