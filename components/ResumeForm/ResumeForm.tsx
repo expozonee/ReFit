@@ -14,19 +14,14 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { FileUpload } from "../ui/file-upload";
-import { fetchCompanyName, fetchCompanyInfoAI } from "@/util/routeFunctions";
+import {
+  analyzeUserResume,
+  fetchCompanyInfoAI,
+  fetchCompanyName,
+} from "@/util/routeFunctions";
+import { formSchema } from "@/schema/formSchema";
 
-const formSchema = z.object({
-  jobUrl: z.string().url({ message: "Please enter a valid URL." }),
-  resumeFile: z
-    .any()
-    .refine(
-      (file) => file instanceof File || (file && file[0] instanceof File),
-      {
-        message: "Please upload a resume file.",
-      }
-    ),
-});
+import { extractTextFromPDF } from "@/util/routeFunctions";
 
 export function ResumeForm() {
   // 1. Define your form.
@@ -40,12 +35,18 @@ export function ResumeForm() {
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
     try {
-      const { companyName } = await fetchCompanyName(values.jobUrl);
+      const pdfText = await extractTextFromPDF(values.resumeFile[0]);
+      if (!pdfText) {
+        console.error("Failed to extract text from PDF");
+        return;
+      }
+      const companyName = await fetchCompanyName(values.jobUrl);
       console.log("Extracted company name:", companyName);
       const data = await fetchCompanyInfoAI(companyName, values.jobUrl);
       console.log("AI Company Info Result:", data);
+      const analyzeResult = await analyzeUserResume(pdfText, data);
+      console.log(analyzeResult);
     } catch (err) {
       console.error("Error in form submission:", err);
     }
