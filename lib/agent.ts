@@ -1,5 +1,6 @@
 // AI Resume Agent - Functional Version
 
+import { fetchCompanyInfoAI, fetchCompanyName } from "@/util/routeFunctions";
 import { scrapeCompanyInfoAI } from "./scrapeCompanyInfoAI";
 
 // import { scrapeCompanyInfo } from "./scrapeCompanyInfo";
@@ -13,13 +14,14 @@ export interface JobInfo {
 }
 
 export interface CompanyProfile {
-  name: string;
-  jobTitle: string;
-  typicalSkills: string[];
-  companyDescription: string;
-  keyResponsibilities?: string[];
-  basicQualifications?: string[];
-  preferredQualifications?: string[];
+  // name: string;
+  // jobTitle: string;
+  // typicalSkills: string[];
+  // companyDescription: string;
+  // keyResponsibilities?: string[];
+  // basicQualifications?: string[];
+  // preferredQualifications?: string[];
+  text: string;
 }
 
 export interface ResumeAnalysis {
@@ -46,7 +48,7 @@ export async function analyzeJobUrl(url: string): Promise<JobInfo> {
 }
 
 // Research the company for typical skills and info
-export async function researchCompany(
+async function researchCompany(
   companyName: string,
   jobUrl: string
 ): Promise<CompanyProfile | undefined> {
@@ -61,7 +63,7 @@ export async function researchCompany(
 }
 
 // Analyze the user's resume file or text
-export async function analyzeResume(
+async function analyzeResume(
   resumeFile: File | string
 ): Promise<ResumeAnalysis> {
   // TODO: Implement resume parsing and analysis
@@ -74,16 +76,14 @@ export async function analyzeResume(
 }
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
-export async function askUserQuestions(
-  _missingInfo: string[]
-): Promise<UserAnswers> {
+async function askUserQuestions(_missingInfo: string[]): Promise<UserAnswers> {
   // TODO: Implement interactive Q&A with user
   return {};
 }
 /* eslint-enable @typescript-eslint/no-unused-vars */
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
-export async function generateResume(
+async function generateResume(
   _jobInfo: JobInfo,
   _companyProfile: CompanyProfile,
   _resumeAnalysis: ResumeAnalysis,
@@ -93,3 +93,11 @@ export async function generateResume(
   return "";
 }
 /* eslint-enable @typescript-eslint/no-unused-vars */
+export const agent = {
+  researchCompany,
+  analyzeResume,
+  askUserQuestions,
+  generateResume,
+  fetchCompanyName,
+  fetchCompanyInfoAI,
+};
